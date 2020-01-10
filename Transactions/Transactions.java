@@ -57,7 +57,7 @@ public class Transactions {
         Object[] standardReleaseCondition  = {"sig",pubkey};
         author.put("address",address);
         author.put("authentifiers",authentifiers);
-        author.put("definition",standardReleaseCondition);
+        //author.put("definition",standardReleaseCondition);
 
         return author;
     }
@@ -95,7 +95,7 @@ public class Transactions {
         }
         */
         int headerCommission = calcHeaderCommission(header);
-        int payloadCommission = calcPayloadCommission(payload);
+        int payloadCommission = calcPayloadCommission(msgArr);
         JSONObject headerNoAuth = createHeader(authors,headerInfo,false);
         String unitHash =
                 calcUnitHash(header, headerNoAuth, createMsg(payload,false));
@@ -170,18 +170,30 @@ public class Transactions {
 
     private static int calcHeaderCommission(JSONObject header){
         final int PARENT_UNITS_SIZE = 88;
-        return calcSize(header) + PARENT_UNITS_SIZE;
+        JSONObject newHeader = new JSONObject(header, JSONObject.getNames(header));
+        newHeader.remove("parent_units");
+        System.out.print("header size is ");
+        System.out.println(calcSize(newHeader) + PARENT_UNITS_SIZE);
+        return calcSize(newHeader) + PARENT_UNITS_SIZE;
     }
 
 
-    private static int calcPayloadCommission(JSONObject payload){
+    private static int calcPayloadCommission(JSONObject[] payload){
+
+        System.out.print("this the payload");
+        //System.out.println(payload);
         return calcSize(payload);
     }
 
 
     private static int calcSize(Object element){
+        System.out.print("the element is ");
+        System.out.println(element);
         if(element == null){
             return 0;
+        }
+        else if(element instanceof String){
+            return  ((String) element).length();
         }
         else if(element instanceof Integer){
             return 8;
@@ -192,7 +204,13 @@ public class Transactions {
             Iterator<String> keys = jsonObj.keys();
             while(keys.hasNext()){
                 String key = keys.next();
+                System.out.print("key is ");
+                System.out.println(key);
+                System.out.print("attribute is ");
+                System.out.println(jsonObj.get(key));
                 length += calcSize(jsonObj.get(key));
+                System.out.print("length is  ");
+                System.out.println(length);
             }
             return length;
         }
@@ -200,7 +218,11 @@ public class Transactions {
             int length = 0;
             Object[] headerElementArray = (Object[]) element;
             for(Object arrMember : headerElementArray){
+                System.out.print("arr member is ");
+                System.out.println(arrMember);
                 length += calcSize(arrMember);
+                System.out.print("length is ");
+                System.out.println(length);
             }
             return length;
         }
