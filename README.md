@@ -128,6 +128,63 @@ this is functionally a header without **authentifiers** and payloadless **messag
 ## Signatues
 signatures should have a length of **exactly** 88 bytes. They should be a concatenation
 of just the **r** and **s** points.
+
+
+## headerInfo
+header info comes from the network. 
   
+## Unit
+
+a completed transaction will appear liket this:
+
+```
+{
+      "unit":"/XmIf5lnmZTTntKL0I0fQ8XavLfOn7jq7YC3nqCJ6GI=",
+      "version":"1.0",
+      "alt":"1",
+      "witness_list_unit":"FxtHGkOHjv7aXajkg00/22Xp7VVXZEvT5cXfe8BSZEQ=",
+      "last_ball_unit":"7yjsGAO3C1s5bmXePNy+JLD5XJvxX2BFmN3HpCYWp0w=",
+      "last_ball":"MHbriaJFqc2Wxj/UBWSOk6EpLNlnfe71aXWsOdVMz8U=",
+      "headers_commission":344,
+      "payload_commission":157,
+      "main_chain_index":980897,
+      "timestamp":1578309540,
+      "parent_units":[
+         "0O9uvGcF/sbVnTdfZkbfJcJVuQvVE6aIWk2f7SDZZnA="
+      ],
+      "authors":[
+         {
+            "address":"5PNCW2VHMOSGRQYJW7WQ7JVTX3HY5ZDB",
+            "authentifiers":{
+               "r":"yPSkwrAQB0gZhN7JsYGb18+xaDcTWdnJQTkQTOl0A1U65wEKM+u172iBWJxQq+TDNhiNnzEQ6kea4QUEbt3TmA=="
+            }
+         }
+      ],
+      "messages":[
+         {
+            "app":"payment",
+            "payload_hash":"pXVXZVN5MRXhJZtHyGtadSu3DSnuKiUm8espRwBg7rs=",
+            "payload_location":"inline",
+            "payload":{
+               "inputs":[
+                  {
+                     "unit":"OnpvoZpzsBcOd+zfshQhsSWF+HC7A20vpRfdgXpqZDc=",
+                     "message_index":0,
+                     "output_index":0
+                  }
+               ],
+               "outputs":[
+                  {
+                     "address":"5PNCW2VHMOSGRQYJW7WQ7JVTX3HY5ZDB",
+                     "amount":24586996
+                  }
+               ]
+            }
+         }
+      ]
+   }
+}
+
+```
   
 
