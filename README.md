@@ -123,9 +123,9 @@ a release condition is just signature derived from signing this:
 
 ```
 
-this is functionally a header without **authentifiers** and payloadless **messages**
+this is functionally a header without **authentifiers** and **payloadless messages**
 
-## Signatues
+## Signatures
 signatures should have a length of **exactly** 88 bytes. They should be a concatenation
 of just the **r** and **s** points.
 
