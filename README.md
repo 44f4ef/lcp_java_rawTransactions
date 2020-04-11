@@ -186,5 +186,18 @@ a completed transaction will appear liket this:
 }
 
 ```
-  
 
+## To Sign
+
+the simplest way to create wallet key from know mnemonic is:
+```
+import keyManagement
+
+DeterministicKey walletKey = keyManagement.deriveWalletKey(String mnemonic, String password);
+```
+
+to sign a transaction:
+```
+String base64Signature = keyManagement.sign(DeterministicKey key, byte[] rawHash);
+
+```
