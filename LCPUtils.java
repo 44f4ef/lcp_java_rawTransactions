@@ -1,5 +1,5 @@
-//put package information here
-package LCP;
+package LCP;//put package information here
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;

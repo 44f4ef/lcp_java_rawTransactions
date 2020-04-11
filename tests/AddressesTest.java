@@ -2,7 +2,6 @@ package LCP.tests;
 import LCP.Addresses;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.junit.*;
 
 class AddressesTest {
     public static void main(String[] args) throws Exception {

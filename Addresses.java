@@ -1,11 +1,12 @@
 package LCP;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Base32;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Addresses {
 
@@ -48,6 +49,7 @@ public class Addresses {
         return verifyChecksum(binaryToByte(seperatedData[0]),binaryToByte(seperatedData[1]));
     }
 
+//private functions
 
     private static boolean verifyChecksum(byte[] checksum, byte[] data) throws NoSuchAlgorithmException {
         return checksum == generateChecksum(data);
