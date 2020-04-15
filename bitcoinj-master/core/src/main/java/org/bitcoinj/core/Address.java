@@ -23,12 +23,13 @@ import org.bitcoinj.script.Script.ScriptType;
 
 /**
  * <p>
- * Base class for addresses, e.g. native segwit addresses ({@link SegwitAddress}) or legacy addresses ({@link LegacyAddress}).
+ * Base class for addresses, e.g. native segwit addresses
+ * ({@link SegwitAddress}) or legacy addresses ({@link LegacyAddress}).
  * </p>
  * 
  * <p>
- * Use {@link #fromString(NetworkParameters, String)} to conveniently construct any kind of address from its textual
- * form.
+ * Use {@link #fromString(NetworkParameters, String)} to conveniently construct
+ * any kind of address from its textual form.
  * </p>
  */
 public abstract class Address extends PrefixedChecksummedBytes {
@@ -39,20 +40,19 @@ public abstract class Address extends PrefixedChecksummedBytes {
     /**
      * Construct an address from its textual form.
      * 
-     * @param params
-     *            the expected network this address is valid for, or null if the network should be derived from the
-     *            textual form
-     * @param str
-     *            the textual form of the address, such as "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL" or
-     *            "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
+     * @param params the expected network this address is valid for, or null if the
+     *               network should be derived from the textual form
+     * @param str    the textual form of the address, such as
+     *               "17kzeh4N8g49GFvdDzSf8PjaPfyoD1MndL" or
+     *               "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4"
      * @return constructed address
-     * @throws AddressFormatException
-     *             if the given string doesn't parse or the checksum is invalid
-     * @throws AddressFormatException.WrongNetwork
-     *             if the given string is valid but not for the expected network (eg testnet vs mainnet)
+     * @throws AddressFormatException              if the given string doesn't parse
+     *                                             or the checksum is invalid
+     * @throws AddressFormatException.WrongNetwork if the given string is valid but
+     *                                             not for the expected network (eg
+     *                                             testnet vs mainnet)
      */
-    public static Address fromString(@Nullable NetworkParameters params, String str)
-            throws AddressFormatException {
+    public static Address fromString(@Nullable NetworkParameters params, String str) throws AddressFormatException {
         try {
             return LegacyAddress.fromBase58(params, str);
         } catch (AddressFormatException.WrongNetwork x) {
@@ -69,14 +69,12 @@ public abstract class Address extends PrefixedChecksummedBytes {
     }
 
     /**
-     * Construct an {@link Address} that represents the public part of the given {@link ECKey}.
+     * Construct an {@link Address} that represents the public part of the given
+     * {@link ECKey}.
      * 
-     * @param params
-     *            network this address is valid for
-     * @param key
-     *            only the public part is used
-     * @param outputScriptType
-     *            script type the address should use
+     * @param params           network this address is valid for
+     * @param key              only the public part is used
+     * @param outputScriptType script type the address should use
      * @return constructed address
      */
     public static Address fromKey(final NetworkParameters params, final ECKey key, final ScriptType outputScriptType) {

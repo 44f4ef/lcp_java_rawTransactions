@@ -15,7 +15,7 @@ public class Addresses {
      * @return LCPAddress example A2WWHN7755YZVMXCBLMFWRSLKSZJN3FU length must be 32 char always.
      * @throws Exception
      */
-    public static String generateAddress(Object[] releaseCondition) throws Exception {
+    public static String makeAddressFromReleaseCondition(Object[] releaseCondition) throws Exception {
         if(!(releaseCondition[0] instanceof String) || !(releaseCondition[1] instanceof JSONObject)){
             throw new Exception("malformed releaseCondition");
         }
@@ -24,7 +24,12 @@ public class Addresses {
         return generateAddressCore(addressHash);
     }
 
-
+    public static String makeAddressFromPubKey(String publicKeyBase64) throws Exception{
+        JSONObject publicKeyJSON = new JSONObject();
+        publicKeyJSON.put("pubkey",publicKeyBase64);
+        Object[] releaseCondition  = new Object[]{"sig",publicKeyJSON};
+        return makeAddressFromReleaseCondition(releaseCondition);
+    }
     /**
      * @param base64publicKeyStr example: "Ald9tkgiUZQQ1djpZgv2ez7xf1ZvYAsTLhudhvn0931w"
      * @return example: 0BIB5FSRENMQ4CYADBS2OM7I3IEE32ZQG 33 length. always start with '0'

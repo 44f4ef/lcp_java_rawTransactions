@@ -18,7 +18,7 @@ import java.util.Base64;
 import java.util.List;
 
 
-public class KeyManagement {
+public class KeyManagement{
     /**
      * returns a Deterministic Hierarchy with the master key at the top
      * @param mnemonic<String> 12 words
@@ -66,6 +66,16 @@ public class KeyManagement {
 
     }
 
+    public static DeterministicKey deriveAddressKey(DeterministicKey walletKey){
+        DeterministicKey addressKeyNoPrivate = walletKey.dropPrivateBytes();
+        return addressKeyNoPrivate.dropParent();
+    }
+
+    public static DeterministicKey deriveAddressKey(String mnemonic, String password)
+            throws UnreadableWalletException {
+        DeterministicKey walletKey = deriveWalletKey(mnemonic,password);
+        return deriveAddressKey(walletKey);
+    }
     /**
      * device keys are used to validate WebSocket connections with the hub
      * @param mnemonic<String> 12 words
@@ -103,7 +113,19 @@ public class KeyManagement {
         return Base64.getEncoder().encodeToString(sigBytes);
     }
 
-
+    /**
+     * @param key<DeterministicKey> assumed to be a either wallet key or address key with path "m/44'/0'/0'
+     * @param change<Integer> zero or one
+     * @param addressIndex<Integer> index of address
+     */
+    public static String getPublicKeyBase64(DeterministicKey key, int change, int addressIndex) {
+        ChildNumber changeCN = new ChildNumber(change,false);
+        ChildNumber addressIndexCN = new ChildNumber(addressIndex,false);
+        DeterministicKey keyChange = HDKeyDerivation.deriveChildKey(key,changeCN);
+        DeterministicKey addressPubKey = HDKeyDerivation.deriveChildKey(keyChange,addressIndexCN);
+        byte[] addressBytes = addressPubKey.getPubKey();
+        return Base64.getEncoder().encodeToString(addressBytes);
+    }
 }
 
 

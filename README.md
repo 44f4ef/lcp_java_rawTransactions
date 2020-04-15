@@ -201,3 +201,11 @@ to sign a transaction:
 String base64Signature = keyManagement.sign(DeterministicKey key, byte[] rawHash);
 
 ```
+
+## To Make Address
+```
+DeterministicKey addressKey = KeyManagement.deriveAddressKey(String mnemonic, String password);
+//addressKeys have no privateKeys attached
+String pubKeyB64 = KeyManagement.getPublicKeyBase64(DeterministicKey addressKey,int change,int account);
+String address = Addresses.makeAddressFromPubKey(pubKeyB64);
+```

@@ -1,6 +1,7 @@
 package LCP.tests;
 
 
+import LCP.Addresses;
 import LCP.KeyManagement;
 import org.bitcoinj.crypto.DeterministicKey;
 import org.bitcoinj.wallet.UnreadableWalletException;
@@ -10,8 +11,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class KeyManagementTest {
-    public static void main(String[] argvs) throws UnreadableWalletException, NoSuchAlgorithmException {
-        makeSignature();
+    public static void main(String[] argvs) throws Exception {
+        //makeSignature();
+        makeAddress();
     }
     public static void buildWalletKey()throws UnreadableWalletException{
         String mnemonic = "glory donate cheese direct soda recycle tenant crystal curious dance paper pyramid";
@@ -51,6 +53,20 @@ public class KeyManagementTest {
         System.out.println(sigStr);
     }
 
+    static void makeAddress() throws Exception {
+        String mnemonic = "glory donate cheese direct soda recycle tenant crystal curious dance paper pyramid";
+        String password = "";
+
+        DeterministicKey walletKey = KeyManagement.deriveWalletKey(mnemonic,password);
+        DeterministicKey addressKey = KeyManagement.deriveAddressKey(walletKey);
+ 
+        String pubKeyB64 = KeyManagement.getPublicKeyBase64(addressKey,0,0);
+        System.out.println("public key is : "+pubKeyB64);
+
+        String address = Addresses.makeAddressFromPubKey(pubKeyB64);
+        System.out.println("address is : "+address);
+
+    }
 
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     public static String bytesToHex(byte[] bytes) {
