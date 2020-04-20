@@ -1,6 +1,5 @@
+
 package LCP.tests;
-
-
 import LCP.Addresses;
 import LCP.KeyManagement;
 import org.bitcoinj.crypto.DeterministicKey;
@@ -49,9 +48,12 @@ public class KeyManagementTest {
     */
         //String sigHex = bytesToHex(sigBytes);
        // System.out.println(sigHex);
-        String sigStr = KeyManagement.sign(walletKey,rawHash);
-        System.out.println(sigStr);
-    }
+        String sigStr = KeyManagement.sign(walletKey,rawHash); //here
+        System.out.println(sigStr);//here
+    }//here
+
+
+
 
     static void makeAddress() throws Exception {
         String mnemonic = "glory donate cheese direct soda recycle tenant crystal curious dance paper pyramid";
@@ -59,7 +61,7 @@ public class KeyManagementTest {
 
         DeterministicKey walletKey = KeyManagement.deriveWalletKey(mnemonic,password);
         DeterministicKey addressKey = KeyManagement.deriveAddressKey(walletKey);
- 
+
         String pubKeyB64 = KeyManagement.getPublicKeyBase64(addressKey,0,0);
         System.out.println("public key is : "+pubKeyB64);
 

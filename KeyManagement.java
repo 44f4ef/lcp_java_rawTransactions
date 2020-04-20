@@ -18,7 +18,7 @@ import java.util.Base64;
 import java.util.List;
 
 
-public class KeyManagement{
+public class KeyManagement implements KeyFunctions{
     /**
      * returns a Deterministic Hierarchy with the master key at the top
      * @param mnemonic<String> 12 words
@@ -66,6 +66,13 @@ public class KeyManagement{
 
     }
 
+
+    public static DeterministicKey deriveSigningKey(DeterministicKey walletKey, int change, int account){
+        DeterministicKey changeKey = HDKeyDerivation.deriveChildKey(walletKey, change);
+
+        return HDKeyDerivation.deriveChildKey(changeKey,account);
+    }
+
     public static DeterministicKey deriveAddressKey(DeterministicKey walletKey){
         DeterministicKey addressKeyNoPrivate = walletKey.dropPrivateBytes();
         return addressKeyNoPrivate.dropParent();
@@ -105,12 +112,19 @@ public class KeyManagement{
         ECKey.ECDSASignature signature = key.sign(hash);
         byte[] rPointBytes = signature.r.toByteArray();
         byte[] sPointBytes = signature.s.toByteArray();
-        byte[] sigBytesHas00 = new byte[rPointBytes.length+ sPointBytes.length];
-        System.arraycopy(rPointBytes, 0, sigBytesHas00, 0, rPointBytes.length);
-        System.arraycopy(sPointBytes, 0, sigBytesHas00, rPointBytes.length, sPointBytes.length);
-        byte[] sigBytes = Arrays.copyOfRange(sigBytesHas00, 1,sigBytesHas00.length);
-        System.out.println(Arrays.toString(sigBytesHas00));
-        return Base64.getEncoder().encodeToString(sigBytes);
+        byte[] concatedSigPoints = new byte[rPointBytes.length+ sPointBytes.length];
+        System.arraycopy(rPointBytes, 0, concatedSigPoints, 0, rPointBytes.length);
+        System.arraycopy(sPointBytes, 0, concatedSigPoints, rPointBytes.length, sPointBytes.length);
+        if(concatedSigPoints[0]==0){
+            byte[] sigBytes = Arrays.copyOfRange(concatedSigPoints, 1,concatedSigPoints.length);
+            return Base64.getEncoder().encodeToString(sigBytes);
+        }
+        else{
+            System.out.println("has 00 "+Arrays.toString(concatedSigPoints));
+            System.out.println("doesnt have "+ Arrays.toString(concatedSigPoints));
+            return Base64.getEncoder().encodeToString(concatedSigPoints);
+        }
+
     }
 
     /**
@@ -125,6 +139,12 @@ public class KeyManagement{
         DeterministicKey addressPubKey = HDKeyDerivation.deriveChildKey(keyChange,addressIndexCN);
         byte[] addressBytes = addressPubKey.getPubKey();
         return Base64.getEncoder().encodeToString(addressBytes);
+    }
+
+
+    @Override
+    public String signTransaction(byte[] rawSHA256Hash) throws NoSuchAlgorithmException {
+        return null;
     }
 }
 

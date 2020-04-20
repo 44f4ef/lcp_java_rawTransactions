@@ -1,9 +1,10 @@
 package LCP;//put package information here
 
+import org.json.JSONObject;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import org.json.*;
 
 public class LCPUtils {
 
@@ -23,6 +24,8 @@ public class LCPUtils {
     public static String toString (Object preImage) {
         String stringJoinChar = "\u0000";
         String[] componentsArray = makeComponentStringArray(preImage);
+       // System.out.println("string componentsArray "+ Arrays.toString(componentsArray));
+       // System.out.println("string form of componentsArray "+ String.join(stringJoinChar,componentsArray));
         return String.join(stringJoinChar,componentsArray);
 
     }
@@ -35,7 +38,6 @@ public class LCPUtils {
          * @throws IllegalArgumentException
          * @throws UnsupportedOperationException for unsupported data types
         */
-
         if (element instanceof String) {
             return new String[]{"s", (String) element};
         }
@@ -56,6 +58,7 @@ public class LCPUtils {
             ArrayList<String> stringArrayList= new ArrayList<String>();
             stringArrayList.add("[");
             for(Object arrayElement : elementArray){
+                //System.out.println("check "+arrayElement+ " from "+ Arrays.toString(elementArray));
                 String[] innerElementStringArray = makeComponentStringArray(arrayElement);
                 stringArrayList.addAll(Arrays.asList(innerElementStringArray));
             }
@@ -72,6 +75,7 @@ public class LCPUtils {
                 String[] objectKeyComponentArray = new String[]{key};//makeComponentStringArray(key);
                 stringArrayList.addAll(Arrays.asList(objectKeyComponentArray));
                 //System.out.println(stringArrayList);
+                //System.out.println("check key "+elementObject.get(key)+ " from "+elementObject);
                 String[] objectAttrComponentArray = makeComponentStringArray(elementObject.get(key));
                 stringArrayList.addAll(Arrays.asList(objectAttrComponentArray));
             }
@@ -80,6 +84,8 @@ public class LCPUtils {
         }
 
         else {
+            System.out.println("what is not supported --> "+ element.getClass().getName() + " "+element);
+
             throw new UnsupportedOperationException("data type not supported");
         }
     }

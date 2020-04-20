@@ -1,6 +1,7 @@
 package LCP;
 
-public interface KeyFunctions {
-    public String getPublicKeyBase64(Integer change, Integer addressIndex)
-            throws Exception;
+import java.security.NoSuchAlgorithmException;
+
+interface KeyFunctions {
+    public String signTransaction(byte[] rawSHA256Hash) throws NoSuchAlgorithmException;
 }
