@@ -120,8 +120,7 @@ public class KeyManagement implements KeyFunctions{
             return Base64.getEncoder().encodeToString(sigBytes);
         }
         else{
-            System.out.println("has 00 "+Arrays.toString(concatedSigPoints));
-            System.out.println("doesnt have "+ Arrays.toString(concatedSigPoints));
+
             return Base64.getEncoder().encodeToString(concatedSigPoints);
         }
 

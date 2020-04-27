@@ -9,12 +9,11 @@ import java.util.*;
 public class LCPUtils {
 
     public static String shaHash (JSONObject payload) throws NoSuchAlgorithmException {
+
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         String payloadString = LCPUtils.toString(payload);
-        //System.out.println(payloadString);
         md.update(payloadString.getBytes());
         byte[] digest = md.digest();
-        //System.out.println(payloadString);
 
         return Base64.getEncoder().encodeToString(digest);
 
@@ -24,8 +23,6 @@ public class LCPUtils {
     public static String toString (Object preImage) {
         String stringJoinChar = "\u0000";
         String[] componentsArray = makeComponentStringArray(preImage);
-       // System.out.println("string componentsArray "+ Arrays.toString(componentsArray));
-       // System.out.println("string form of componentsArray "+ String.join(stringJoinChar,componentsArray));
         return String.join(stringJoinChar,componentsArray);
 
     }
@@ -58,7 +55,6 @@ public class LCPUtils {
             ArrayList<String> stringArrayList= new ArrayList<String>();
             stringArrayList.add("[");
             for(Object arrayElement : elementArray){
-                //System.out.println("check "+arrayElement+ " from "+ Arrays.toString(elementArray));
                 String[] innerElementStringArray = makeComponentStringArray(arrayElement);
                 stringArrayList.addAll(Arrays.asList(innerElementStringArray));
             }
@@ -74,8 +70,6 @@ public class LCPUtils {
             for (String key : keys) {
                 String[] objectKeyComponentArray = new String[]{key};//makeComponentStringArray(key);
                 stringArrayList.addAll(Arrays.asList(objectKeyComponentArray));
-                //System.out.println(stringArrayList);
-                //System.out.println("check key "+elementObject.get(key)+ " from "+elementObject);
                 String[] objectAttrComponentArray = makeComponentStringArray(elementObject.get(key));
                 stringArrayList.addAll(Arrays.asList(objectAttrComponentArray));
             }
@@ -84,8 +78,6 @@ public class LCPUtils {
         }
 
         else {
-            System.out.println("what is not supported --> "+ element.getClass().getName() + " "+element);
-
             throw new UnsupportedOperationException("data type not supported");
         }
     }

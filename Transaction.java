@@ -6,7 +6,6 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Iterator;
 //total_amount + objUnit.headers_commission + naked_payload_commission)
 //get total payload
@@ -34,14 +33,12 @@ public final class Transaction {
         this.networkInfo = networkInfo;
         //this.unSignedUnit = createUnit(outputs,inputs,signers, networkInfo);
         this.preSignature = makePreSignature();
-        System.out.println("this is the preSignature :"+ Arrays.toString(this.preSignature));
+
     }
 
 
     public final String sign(DeterministicKey signer) throws NoSuchAlgorithmException{
         this.signature = KeyManagement.sign(signer,this.preSignature);
-        System.out.println("signature is "+this.signature);
-        //System.out.println("signer pub key "+ signer.getPubKey());
         this.isSigned = true;
         JSONObject signatureObj  = new JSONObject();
         signatureObj.put("r",this.signature);
@@ -58,7 +55,6 @@ public final class Transaction {
 
     public String getSignedUnit() throws NoSuchAlgorithmException {
         JSONObject signedUnit = makeSignedUnit(this.signatureObject);
-        System.out.println("signed Unit : "+ signedUnit);
 
         return LCPUtils.toString(signedUnit);
     }
@@ -71,9 +67,7 @@ public final class Transaction {
         JSONObject msg = makeMsg(payload,false);
         JSONObject[] msgArr = {msg};
         preSigObject.put("messages",msgArr);
-        System.out.println("presig Object :"+preSigObject);
         String preSigObjectStr = LCPUtils.toString(preSigObject);
-        System.out.println("preSigObjectStr "+preSigObjectStr);
         byte[] preSigObjectBytes = preSigObjectStr.getBytes(StandardCharsets.UTF_8);
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         byte[] signedBytes = md.digest(preSigObjectBytes);
@@ -85,12 +79,10 @@ public final class Transaction {
     private JSONObject makeSignedUnit(JSONObject signatureObject)
             throws NoSuchAlgorithmException {
         JSONObject baseSignerObject = this.signers[0];
-        System.out.println("signers object "+this.signers[0]);
         JSONObject authSignerObject = new JSONObject(baseSignerObject,
                 JSONObject.getNames(baseSignerObject)).put("authentifiers",
                 signatureObject);
         JSONObject[] authSignerArr = {authSignerObject};
-        System.out.println("signer array : "+ Arrays.toString(authSignerArr));
         return makeUnit(this.outputs,this.inputs,authSignerArr,this.networkInfo);
 
     }
@@ -109,24 +101,18 @@ public final class Transaction {
         JSONObject unit = new JSONObject(header, JSONObject.getNames(header));
 
         int headerCommission = calcHeaderCommission(header);//changed this
-        //header.put("header_commission",headerCommission);
         int payloadCommission = calcPayloadCommission(msgArr);
 
-        //if(verifyInputAmount((JSONObject[]) payload.get("inputs"))){
-            JSONObject headerNoAuth = makeHeader(this.signers,networkInfo);
-            String unitHash =
-                    calcUnitHash(header, makeMsg(payload,false));
+        JSONObject headerNoAuth = makeHeader(this.signers,networkInfo);
+        String unitHash =
+                calcUnitHash(header, makeMsg(payload,false));
 
-            unit.put("unit",unitHash);
-            unit.put("headers_commission",headerCommission);
-            unit.put("payload_commission",payloadCommission);
+        unit.put("unit",unitHash);
+        unit.put("headers_commission",headerCommission);
+        unit.put("payload_commission",payloadCommission);
 
-            unit.put("messages",msgArr);
-            return unit;
-       /* }
-        else{
-            throw new Exception("insufficient amount");
-        }*/
+        unit.put("messages",msgArr);
+        return unit;
 
     }
 
@@ -169,7 +155,6 @@ public final class Transaction {
         header.put("authors",authors);
         header.put("witness_list_unit",chainInfoFromNetwork.get("witness_list_unit"));
         header.put("parent_units",chainInfoFromNetwork.get("parent_units"));
-        System.out.println("this is the header "+header);
         return header;
     }
 /*
@@ -181,8 +166,6 @@ public final class Transaction {
         final int PARENT_UNITS_SIZE = 88;
         JSONObject newHeader = new JSONObject(header, JSONObject.getNames(header));
         newHeader.remove("parent_units");
-        System.out.println("header without parent_units "+ newHeader);
-        System.out.println("header size is "+(calcSize(newHeader) + PARENT_UNITS_SIZE));
 
         return calcSize(newHeader) + PARENT_UNITS_SIZE;
     }
@@ -190,15 +173,12 @@ public final class Transaction {
 
     private int calcPayloadCommission(JSONObject[] payload){
 
-        System.out.print("this the payload");
-        //System.out.println(payload);
         return calcSize(payload);
     }
 
 
     private int calcSize(Object element){
-        System.out.print("the element is ");
-        System.out.println(element);
+
         if(element == null){
             return 0;
         }
@@ -214,13 +194,8 @@ public final class Transaction {
             Iterator<String> keys = jsonObj.keys();
             while(keys.hasNext()){
                 String key = keys.next();
-                System.out.print("key is ");
-                System.out.println(key);
-                System.out.print("attribute is ");
-                System.out.println(jsonObj.get(key));
                 length += calcSize(jsonObj.get(key));
-                System.out.print("length is  ");
-                System.out.println(length);
+
             }
             return length;
         }
@@ -228,11 +203,9 @@ public final class Transaction {
             int length = 0;
             Object[] headerElementArray = (Object[]) element;
             for(Object arrMember : headerElementArray){
-                System.out.print("arr member is ");
-                System.out.println(arrMember);
+
                 length += calcSize(arrMember);
-                System.out.print("length is ");
-                System.out.println(length);
+
             }
             return length;
         }
@@ -246,16 +219,12 @@ public final class Transaction {
     private String calcUnitHash(JSONObject header,//header commission
                                 JSONObject msgNoPayload)
             throws NoSuchAlgorithmException {
-        System.out.println("header "+ header);
+
         JSONObject headerNoAuthentification = makeHeader(this.signers, this.networkInfo);
-        System.out.println("headerNoAuth "+headerNoAuthentification);
         JSONObject partialUnit = new JSONObject(header, JSONObject.getNames(header));
         JSONObject[] messages = {msgNoPayload};
         partialUnit.put("messages",messages);
-        System.out.println("messages n calcUnitHash "+ Arrays.toString(messages));
-        System.out.println("partial unit "+ partialUnit);
         String contentHash = LCPUtils.shaHash(partialUnit);
-        System.out.println("content Hash "+contentHash);
         headerNoAuthentification.put("content_hash",contentHash);
 
         return LCPUtils.shaHash(headerNoAuthentification);

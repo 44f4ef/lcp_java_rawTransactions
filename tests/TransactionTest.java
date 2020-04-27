@@ -26,12 +26,7 @@ public class TransactionTest {
         //DeterministicKey signingKey = key.deriveChild(0,0).key;
 
         String pubKeyB64 = KeyManagement.getPublicKeyBase64(walletKey,0,0);
-        System.out.println("public key is : "+pubKeyB64);
-
         String address = Addresses.makeAddressFromPubKey(pubKeyB64);
-        System.out.println("address is : "+address);
-
-
         JSONObject testUnit = manualUnit();//manualUnit();//parseUnit(LCPConstants.TEST_UNIT);
         Transaction transaction = new Transaction((JSONObject[])testUnit.get("outputs"),
                 (JSONObject[])testUnit.get("inputs"),(JSONObject[])testUnit.get("signers"),

@@ -44,7 +44,6 @@ public final class LCPKey implements KeyFunctions {
         System.arraycopy(rPointBytes, 0, sigBytesHas00, 0, rPointBytes.length);
         System.arraycopy(sPointBytes, 0, sigBytesHas00, rPointBytes.length, sPointBytes.length);
         byte[] sigBytes = Arrays.copyOfRange(sigBytesHas00, 1,sigBytesHas00.length);
-        System.out.println(Arrays.toString(sigBytesHas00));
 
         return Base64.getEncoder().encodeToString(sigBytes);
     }
