@@ -22,10 +22,10 @@ public class TransactionTest {
         DeterministicKey walletKey = KeyManagement.deriveWalletKey(mnemonic,password);
         DeterministicKey changeKey = HDKeyDerivation.deriveChildKey(walletKey,0);
         DeterministicKey signerKey = HDKeyDerivation.deriveChildKey(changeKey,0);
-        LCPKey key = new LCPKey(walletKey);
+        DeterministicKey addressKey = KeyManagement.deriveAddressKey(walletKey);
         //DeterministicKey signingKey = key.deriveChild(0,0).key;
 
-        String pubKeyB64 = KeyManagement.getPublicKeyBase64(walletKey,0,0);
+        String pubKeyB64 = KeyManagement.getPublicKeyBase64(addressKey,0,0);
         String address = Addresses.makeAddressFromPubKey(pubKeyB64);
         JSONObject testUnit = manualUnit();//manualUnit();//parseUnit(LCPConstants.TEST_UNIT);
         Transaction transaction = new Transaction((JSONObject[])testUnit.get("outputs"),

@@ -13,33 +13,39 @@ to make an address
 公钥必须是base64编码的字符串。
 
 ## wallet address (钱包地址)
+**simple**
 
+```LCP.Addresses.makeAddressFromPubKey(publicKeyBase64)``` 
 
-```LCP.Addresses.generateAddress(releaseCondition)``` 
+**not simple**
 
-  **releaseCondition** must be an **Object** array in this form:
-    
-   `["sig",{"pubkey":"Ald9tkgiUZQQ1djpZgv2ez7xf1ZvYAsTLhudhvn0931w"}]`
+addresses can be made from address keys. address keys as made from wallet keys 
+directly or from master key mnemonic and password.
 
+`DeterministicKey addressKey = KeyManagement.deriveAddressKey(walletKey);`
 
-## Device Address 设备地址:
+or 
 
-`LCP.Addresses.generateDeviceAddress(publicKey)`
+`DeterministicKey addressKey = KeyManagement.deriveAddressKey(mnemonic, password);`
 
-   *publicKey* must be in this form base64 encoded *String*:
-     
-    `"Ald9tkgiUZQQ1djpZgv2ez7xf1ZvYAsTLhudhvn0931w"`
+this is how to generate an address from the address key:
+
+```
+String pubKeyB64 = LCP.KeyManagement.getPublicKeyBase64(addressKey,0,0);
+String address = LCP.Addresses.makeAddressFromPubKey(pubKeyB64);
+```
+
      
 ## Create Raw Transactions
 
-`LCP.Transactions.makeRaw(JSONObject[] outputs,
-         JSONObject[] inputs,
-         JSONObject[] authors,
-         JSONObject headerInfo)`
+```
+Transaction transaction = new Transaction(JSONObject[] outputs,
+           JSONObject[] inputs,JSONObject[] signers,JSONObject networkInfo);
+```
 
 ### outputs:
 ```
-   outputs: [
+ [
     
     {"amount":17396604,
     
@@ -57,7 +63,7 @@ to make an address
     
   ### inputs:
   ```
-  inputs: [
+[
             {"unit":"0pzRg8DT1sfS95fbv3XK7OOjIDw4B/QcWXOPYectSJg=",
   
              "message_index":0,
@@ -74,68 +80,54 @@ to make an address
   *message_index* - a unit can have multiple messages in the message array so 
   this index selects one of possible many but normally there is only one message.
   
-  *output_index* - a *payment* message can send coins to mulitple addresses. what
-  is the index of your address in that output array.
+  *output_index* - a **payment** message can send coins to mulitple addresses. what
+  is the index of your address in that output array. most times that output_index is
+  1 because the first index would usually be the senders change address.
   
-  ### authors
-  the signer(s) of the releaseCondition.
+  ### signers
+  the address of the signer(s) of the transaction. this is the address(s) of the coins
+  that the user is trying to unlock
   ```
 "authors":[
               {
                  "address":"5PNCW2VHMOSGRQYJW7WQ7JVTX3HY5ZDB",
-                 "authentifiers":{
-                    "r":"yPSkwrAQB0gZhN7JsYGb18+xaDcTWdnJQTkQTOl0A1U65wEKM+u172iBWJxQq+TDNhiNnzEQ6kea4QUEbt3TmA=="
-                 }
+         
               },
 
             ...
 
            ]
 ```
+## network info is usually gotten from the network.
+use the python lcp server to do that with
 
+```curl http://localhost:8080/get_header_info```
 
-addresses are just hashes of **Relase Conditions** and **Release Conditions** 
-are minimally necessary conditions to unlock coins. 99.9 percent of the time 
-a release condition is just signature derived from signing this:
-
-```
-{ version: '1.0',
-
-  alt: '1',
-
-  witness_list_unit: 'FxtHGkOHjv7aXajkg00/22Xp7VVXZEvT5cXfe8BSZEQ=',
-
-  last_ball_unit: '7yjsGAO3C1s5bmXePNy+JLD5XJvxX2BFmN3HpCYWp0w=',
-
-  last_ball: 'MHbriaJFqc2Wxj/UBWSOk6EpLNlnfe71aXWsOdVMz8U=',
-
-  parent_units: [ '0O9uvGcF/sbVnTdfZkbfJcJVuQvVE6aIWk2f7SDZZnA=' ],
-
-  authors: 
-       [ { address: '5PNCW2VHMOSGRQYJW7WQ7JVTX3HY5ZDB'} ],
-
-  messages: 
-       [ { app: 'payment',
-           payload_hash: 'pXVXZVN5MRXhJZtHyGtadSu3DSnuKiUm8espRwBg7rs=',
-           payload_location: 'inline' } ] 
-
-}
+the result is:
 
 ```
-
-this is functionally a header without **authentifiers** and **payloadless messages**
-
-## Signatures
-signatures should have a length of **exactly** 88 bytes. They should be a concatenation
-of just the **r** and **s** points.
-
-
-## headerInfo
-header info comes from the network. 
+  {
+    'parent_units': ['RNlEq0wwg2ipYAP8c6suc9cDBgR9mrxa1lbVYRgXMGk='], 
+    'last_stable_mc_ball': '+/RD5iwLqjXKiEp0yphNZ0rcFx1qF4ewS5zb92ZZg5A=', 
+    'last_stable_mc_ball_unit': 'UHrq5UjL/9J0Y+vwyWEMv/kbN60lzvJtghacgQJ2Zoc=', 
+    'last_stable_mc_ball_mci': 1562561, 
+    'witness_list_unit': 'FxtHGkOHjv7aXajkg00/22Xp7VVXZEvT5cXfe8BSZEQ='
+  }
+```
   
+
+## To Sign
+```
+Transaction transaction = new Transaction(....);
+
+String signedUnit = transaction.sign(DeterministicKey signerKey);
+
+```
+
+
 ## Unit
 
-a completed transaction will appear liket this:
+a completed transaction will appear like this:
 
 ```
 {
@@ -146,9 +138,7 @@ a completed transaction will appear liket this:
       "last_ball_unit":"7yjsGAO3C1s5bmXePNy+JLD5XJvxX2BFmN3HpCYWp0w=",
       "last_ball":"MHbriaJFqc2Wxj/UBWSOk6EpLNlnfe71aXWsOdVMz8U=",
       "headers_commission":344,
-      "payload_commission":157,
-      "main_chain_index":980897,
-      "timestamp":1578309540,
+      "payload_commission":157,   
       "parent_units":[
          "0O9uvGcF/sbVnTdfZkbfJcJVuQvVE6aIWk2f7SDZZnA="
       ],
@@ -185,27 +175,4 @@ a completed transaction will appear liket this:
    }
 }
 
-```
-
-## To Sign
-
-the simplest way to create wallet key from know mnemonic is:
-```
-import keyManagement
-
-DeterministicKey walletKey = keyManagement.deriveWalletKey(String mnemonic, String password);
-```
-
-to sign a transaction:
-```
-String base64Signature = keyManagement.sign(DeterministicKey key, byte[] rawHash);
-
-```
-
-## To Make Address
-```
-DeterministicKey addressKey = KeyManagement.deriveAddressKey(String mnemonic, String password);
-//addressKeys have no privateKeys attached
-String pubKeyB64 = KeyManagement.getPublicKeyBase64(DeterministicKey addressKey,int change,int account);
-String address = Addresses.makeAddressFromPubKey(pubKeyB64);
 ```

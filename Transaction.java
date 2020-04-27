@@ -56,7 +56,7 @@ public final class Transaction {
     public String getSignedUnit() throws NoSuchAlgorithmException {
         JSONObject signedUnit = makeSignedUnit(this.signatureObject);
 
-        return LCPUtils.toString(signedUnit);
+        return signedUnit.toString();
     }
 
 
