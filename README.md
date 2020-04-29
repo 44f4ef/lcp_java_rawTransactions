@@ -31,7 +31,7 @@ or
 this is how to generate an address from the address key:
 
 ```
-String pubKeyB64 = LCP.KeyManagement.getPublicKeyBase64(addressKey,0,0);
+String pubKeyB64 = LCP.KeyManagement.getPublicKeyBase64(addressKey,[change],[address_index]);
 String address = LCP.Addresses.makeAddressFromPubKey(pubKeyB64);
 ```
 
