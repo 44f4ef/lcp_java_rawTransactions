@@ -14,13 +14,17 @@ to make an address
 
 ## wallet address (钱包地址)
 **simple**
+**简单**
 
 ```LCP.Addresses.makeAddressFromPubKey(publicKeyBase64)``` 
 
 **not simple**
+**不简单**
 
-addresses can be made from address keys. address keys as made from wallet keys 
+addresses can be made from address keys. address keys are made from wallet keys 
 directly or from master key mnemonic and password.
+
+地址可以通过地址密钥进行
 
 `DeterministicKey addressKey = KeyManagement.deriveAddressKey(walletKey);`
 
@@ -30,6 +34,8 @@ or
 
 this is how to generate an address from the address key:
 
+这是从抵制迷药生成地址的方法：
+
 ```
 String pubKeyB64 = LCP.KeyManagement.getPublicKeyBase64(addressKey,[change],[address_index]);
 String address = LCP.Addresses.makeAddressFromPubKey(pubKeyB64);
@@ -37,6 +43,9 @@ String address = LCP.Addresses.makeAddressFromPubKey(pubKeyB64);
 
      
 ## Create Raw Transactions
+
+## 创建原始交易
+
 
 ```
 Transaction transaction = new Transaction(JSONObject[] outputs,
