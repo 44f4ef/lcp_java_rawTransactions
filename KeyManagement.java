@@ -30,7 +30,7 @@ public class KeyManagement implements KeyFunctions{
             throws UnreadableWalletException {
 
         long unixTime = Instant.now().getEpochSecond();
-        //"yard impulse luxury drive today throw farm pepper survey wreck glass federal";
+       
         DeterministicSeed masterSeed = new DeterministicSeed(mnemonic,
                 null, password, unixTime);
         DeterministicKey masterKey = HDKeyDerivation.createMasterPrivateKey(masterSeed.getSeedBytes());
